@@ -190,5 +190,6 @@ SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = [
 ]
 
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/auth/users/me/"  # Change this to any endpoint you want
+LOGOUT_REDIRECT_URL = "/"  # Redirect after logout
+

@@ -21,11 +21,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/cases/', include('cases.urls')),
     path('api/users/', include('users.urls')),
+
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('auth/', include('djoser.social.urls')),
+    # path('auth/social/', include('djoser.social.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('auth/', include('allauth.urls')),
-    # re_path('api/v1/auth/', include('djoser.urls')),
-    # re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('accounts/', include('allauth.urls')),
+
 ]
