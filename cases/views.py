@@ -2,7 +2,10 @@ from rest_framework import viewsets
 from .models import Case, CaseTypes
 from .serializers import CaseSerializer, CaseTypeSerializer
 import requests
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
+
+
 
 class CaseViewSet(viewsets.ModelViewSet):
     queryset = Case.objects.all()
@@ -25,3 +28,40 @@ def dashboard_view(request):
 
     # Pass the data to the template
     return render(request, "dashboard.html", {"cases": cases, "case_types": case_types})
+
+
+def create_case_view(request):
+    if request.method == 'POST':
+        form = CaseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirect to the dashboard or another page after saving
+    else:
+        form = CaseForm()
+
+    return render(request, 'create_case.html', {'form': form})
+
+
+def list_cases_view(request):
+    cases = Case.objects.all()  # Fetch all cases from the database
+    return render(request, 'list_cases.html', {'cases': cases})
+
+
+def update_case_view(request, case_id):
+    case = get_object_or_404(Case, id=case_id)
+
+    if request.method == 'POST':
+        form = CaseForm(request.POST, instance=case)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirect to the dashboard after saving
+    else:
+        form = CaseForm(instance=case)
+
+    return render(request, 'update_case.html', {'form': form})
+
+
+def delete_case_view(request, case_id):
+    case = get_object_or_404(Case, id=case_id)
+    case.delete()  # Deletes the case
+    return redirect('dashboard')  # Redirect back to the dashboard after deletion
