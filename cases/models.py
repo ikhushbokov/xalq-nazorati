@@ -55,5 +55,11 @@ class CaseImage(models.Model):
     video = models.FileField(upload_to='cases/videos/', blank=True, null=True)
     image = models.ImageField(upload_to='cases/images/', blank=True, null=True)
 
+    def clean(self):
+        if not self.image and not self.video:
+            raise ValidationError('You must upload either an image or a video.')
+        if self.image and self.video:
+            raise ValidationError('You can only upload either an image or a video, not both.')
+
     def __str__(self):
         return f"Image for Case {self.case.case_number} by {self.user.full_name}"
