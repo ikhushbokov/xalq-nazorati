@@ -11,8 +11,9 @@ class CaseTypes(models.Model):
     def __str__(self):
         return self.title
 
+
 class Case(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cases",  null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cases", null=True, blank=True)
     case_type = models.ForeignKey(CaseTypes, on_delete=models.CASCADE)
     description = models.TextField()
     manual_address = models.CharField(max_length=255, blank=True, null=True)
@@ -25,28 +26,27 @@ class Case(models.Model):
     def __str__(self):
         return f"Case #{self.case_number} - {self.user.full_name}"
 
+    def clean(self):
+        if not self.description:
+            raise ValidationError("Description is required.")
+        if not self.manual_address and (self.latitude is None or self.longitude is None):
+            raise ValidationError("Either manual address or latitude and longitude should be provided.")
+
+    @property
+    def get_address(self):
+        if self.manual_address:
+            return self.manual_address
+        return f"Lat: {self.latitude}, Long: {self.longitude}"
+
     class Meta:
         ordering = ['-created_time']
+
 
 @receiver(pre_save, sender=Case)
 def set_case_number(sender, instance, **kwargs):
     if not instance.case_number:
         last_case = Case.objects.order_by('-case_number').first()
         instance.case_number = (last_case.case_number + 1) if last_case else 1
-
-def clean(self):
-        if not self.description:
-            raise ValidationError("Description is required.")
-        if not self.manual_address and (self.latitude is None or self.longitude is None):
-            raise ValidationError("Either manual address or latitude and longitude should be provided.")
-
-def get_address(self):
-        if self.manual_address:
-            return self.manual_address
-        return f"Lat: {self.latitude}, Long: {self.longitude}"
-
-
-
 
 
 class CaseImage(models.Model):
