@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django.contrib.staticfiles',
 
     'allauth',
@@ -152,44 +153,29 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
 DJOSER = {
-    'SEND_ACTIVATION_EMAIL': True,
-    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-}
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-            'client_id': 'your-google-client-id',
-            'secret': 'your-google-client-secret',
-            'key': ''
-        },
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
+    'USER_ID_FIELD': 'id',
+    'SERIALIZERS': {
+        'user': 'users.serializers.AccountSerializer',
     }
 }
 
-SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = [
-    "http://127.0.0.1:8000/auth/o/google/callback/",  # Localhost
-    # "https://your-production-domain.com/auth/o/google/callback/",  # Production
-]
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  # Adjust as needed
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+
+
+
+
 
 # CORS_ALLOW_ALL_ORIGINS = True
 
@@ -201,3 +187,5 @@ CORS_ALLOWED_ORIGINS = [
 LOGIN_REDIRECT_URL = "/auth/users/me/"  # Change this to any endpoint you want
 LOGOUT_REDIRECT_URL = "/"  # Redirect after logout
 
+
+AUTH_USER_MODEL = 'users.Account'

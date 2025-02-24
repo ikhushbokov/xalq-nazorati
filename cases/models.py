@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from users.models import PassportData
 from django.core.exceptions import ValidationError
 
 
@@ -10,7 +10,7 @@ class CaseTypes(models.Model):
         return self.title
 
 class Case(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cases",  null=True, blank=True)
+    user = models.ForeignKey(PassportData, on_delete=models.CASCADE, related_name="cases",  null=True, blank=True)
     case_type = models.ForeignKey(CaseTypes, on_delete=models.CASCADE)
     description = models.TextField()
     manual_address = models.CharField(max_length=255, blank=True, null=True)
