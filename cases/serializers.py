@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Case, CaseTypes
-from users.models import PassportData
+from users.models import Account
 
 class CaseTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,12 +9,12 @@ class CaseTypeSerializer(serializers.ModelSerializer):
 
 class CaseSerializer(serializers.ModelSerializer):
     case_type = CaseTypeSerializer()
-    user = serializers.PrimaryKeyRelatedField(queryset=PassportData.objects.all())
+    account = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all())
 
     class Meta:
         model = Case
         fields = [
-            'id', 'user', 'case_type', 'description', 'manual_address', 'latitude', 'longitude',
+            'id', 'account', 'case_type', 'description', 'manual_address', 'latitude', 'longitude',
             'case_number', 'created_time', 'updated_time'
         ]
 
